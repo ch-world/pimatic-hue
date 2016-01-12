@@ -1,11 +1,12 @@
-{ "name": "pimatic-plugin-template",
+{
+  "name": "pimatic-hue",
   "description": "The plugin description",
   "author": "Your Name <you@example.com> (http://your-website)",
-  "main": "my-plugin",
+  "main": "hue",
   "files": [
-    "my-plugin.coffee",
+    "hue.coffee",
     "README.md",
-    "my-plugin-config-schema.coffee"
+    "hue-config-schema.coffee"
   ],
   "version": "0.8.0",
   "homepage": "http://your-plugin-website",
@@ -14,8 +15,9 @@
     "type": "git",
     "url": "git://github.com/pimatic/pimatic-plugin-template.git"
   },
-  "configSchema": "my-plugin-config-schema.coffee",
+  "configSchema": "hue-config-schema.coffee",
   "dependencies": {
+    "hue-module": "^0.1.0"
   },
   "peerDependencies": {
     "pimatic": "0.8.*"

@@ -1,11 +1,13 @@
 # #my-plugin configuration options
 # Declare your config option for your plugin here. 
 module.exports = {
-  title: "my plugin config options"
+  title: "Hue plugin config options"
   type: "object"
   properties:
-    option1:
-      description: "Some option"
+    apiKey:
+      description: "Hue API key"
       type: "string"
-      default: "foo"
+    host:
+      description: "Address of Hue Bridge"
+      type: "string"
 }
