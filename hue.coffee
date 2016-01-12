@@ -29,6 +29,7 @@ module.exports = (env) ->
   # ###MyPlugin class
   # Create a class that extends the Plugin class and implements the following functions:
   class Hue extends env.plugins.Plugin
+    polling: null
 
     # ####init()
     # The `init` function is called by the framework to ask your plugin to initialise.
@@ -52,6 +53,7 @@ module.exports = (env) ->
 
       host = @config.host
       key = @config.apiKey
+      @polling = @config.polling
 
       HueApi.load host, key
 
@@ -69,9 +71,10 @@ module.exports = (env) ->
       @hueId = @config.hueId
       super()
       @poll()
-      setInterval( ( => @poll() ), 5000)
+      setInterval( ( => @poll() ), plugin.polling)
 
     poll: ->
+      env.logger.debug("Polling Hue")
       HueApi.light @config.hueId, (light) =>
         if light.reachable
           @_dimlevel = Math.round light.bri / 254 * 100
@@ -92,11 +95,11 @@ module.exports = (env) ->
           HueApi.change light.set({"on": false})
 
       # not sure if nescessary
-      # @_setDimlevel(state)
+      @_setDimlevel(state)
       return state
 
   # ###Finally
   # Create a instance of my plugin
-  myPlugin = new Hue
+  plugin = new Hue
   # and return it to the framework.
-  return myPlugin
+  return plugin

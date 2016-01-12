@@ -10,4 +10,8 @@ module.exports = {
     host:
       description: "Address of Hue Bridge"
       type: "string"
+    polling:
+      description: "Polling Intervall"
+      type: "integer"
+      default: 10000
 }
