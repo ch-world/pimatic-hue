@@ -68,6 +68,16 @@ module.exports = (env) ->
       @id = @config.id
       @hueId = @config.hueId
       super()
+      @poll()
+      setInterval( ( => @poll() ), 5000)
+
+    poll: ->
+      HueApi.light @config.hueId, (light) =>
+        if light.reachable
+          @_dimlevel = Math.round light.bri / 254 * 100
+        if not light.reachable
+          @_dimlevel = 0
+        @emit 'dimlevel', @_dimlevel
 
     changeDimlevelTo: (state) ->
       level = Math.round state * 254 / 100
@@ -80,7 +90,10 @@ module.exports = (env) ->
         env.logger.info(level)
         HueApi.light @hueId, (light) =>
           HueApi.change light.set({"on": false})
-      return
+
+      # not sure if nescessary
+      # @_setDimlevel(state)
+      return state
 
   # ###Finally
   # Create a instance of my plugin
