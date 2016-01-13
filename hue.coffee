@@ -76,15 +76,18 @@ module.exports = (env) ->
     poll: ->
       env.logger.debug("Polling Hue " + @config.hueId)
       HueApi.light @config.hueId, (light) =>
+        #level = null
         if light.reachable
           if light.on
-            @_dimlevel = Math.round light.bri / 254 * 100
+            level = Math.round light.bri / 254 * 100
           else
-            @_dimlevel = 0
+            level = 0
         else
-          @_dimlevel = 0
-        @_setState(@_dimlevel > 0)
-        @emit 'dimlevel', @_dimlevel
+          level = 0
+        if level != @_dimlevel
+          @_dimlevel = level
+          @_setState(level > 0)
+          @emit 'dimlevel', level
 
     changeDimlevelTo: (state) ->
       level = Math.round state * 254 / 100
@@ -97,7 +100,6 @@ module.exports = (env) ->
         HueApi.light @hueId, (light) =>
           HueApi.change light.set({"on": false})
 
-      # not sure if nescessary
       @_setDimlevel(state)
       return state
 
