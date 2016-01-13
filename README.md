@@ -1,17 +1,33 @@
-pimatic-plugin-template
-=======================
+pimatic-hue
+===========
 
-See the [development guide](http://pimatic.org/guide/development/required-skills-readings/) for
-usage.
+Plugin to controll Philipps hue bulbs
 
-Some Tips:
+Configuration
+-------------
 
-###Adding package dependencies
-* You can add other package dependencies by running `npm install something --save`. With the `--save`
-  option npm will auto add the installed dependency in your `package.json`
-* You can always install all dependencies in the package.json with `npm install`
+You need to create an API key on your bridge to use this plugin. See the [hue developer programm](http://www.developers.meethue.com/documentation/getting-started) for details how to do this.
 
-###Commit your changes to git
-* Add all edited files with `git add file`. For example: `git add package.json` then commit you changes 
-  with `git commit`.
-* After that you can push you commited work to github: `git push`
+plugins section:
+```
+{
+  "plugin": "hue",
+  "apiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "host": "xxx.xxx.xxx.xxx"
+}
+```
+
+devices section:
+```
+{
+  "id": "hueBulb1",
+  "class": "HueBulb",
+  "name": "My first bulb",
+  "hueId": 1
+}
+```
+
+Limitations
+-----------
+
+This plugin is beta and work in progress. At the moment you can only controll the brightness and the on/off state of your bulbs. As I don't own any color bulbs yet I'm unable to test code for controlling the color.

@@ -58,7 +58,7 @@ module.exports = (env) ->
       HueApi.load host, key
 
       HueApi.lights (result) =>
-        env.logger.info(result)
+        env.logger.debug(result)
 
 
   class HueBulb extends env.devices.DimmerActuator
@@ -74,12 +74,16 @@ module.exports = (env) ->
       setInterval( ( => @poll() ), plugin.polling)
 
     poll: ->
-      env.logger.debug("Polling Hue")
+      env.logger.debug("Polling Hue " + @config.hueId)
       HueApi.light @config.hueId, (light) =>
         if light.reachable
-          @_dimlevel = Math.round light.bri / 254 * 100
-        if not light.reachable
+          if light.on
+            @_dimlevel = Math.round light.bri / 254 * 100
+          else
+            @_dimlevel = 0
+        else
           @_dimlevel = 0
+        @_setState(@_dimlevel > 0)
         @emit 'dimlevel', @_dimlevel
 
     changeDimlevelTo: (state) ->
@@ -90,7 +94,6 @@ module.exports = (env) ->
           HueApi.change light.set({"bri": level, "on": true})
 
       if level == 0
-        env.logger.info(level)
         HueApi.light @hueId, (light) =>
           HueApi.change light.set({"on": false})
 
