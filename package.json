@@ -11,7 +11,7 @@
   ],
   "version": "0.0.1",
   "homepage": "http://your-plugin-website",
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/ch-world/pimatic-hue.git"

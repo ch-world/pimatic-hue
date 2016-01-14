@@ -1,7 +1,7 @@
 pimatic-hue
 ===========
 
-Plugin to controll Philipps hue bulbs
+Plugin to control Philipps hue bulbs
 
 Configuration
 -------------
@@ -27,7 +27,10 @@ devices section:
 }
 ```
 
+hueId is the ID of the bulb on the bridge. If you start pimatic with debug turned on 
+the plugin will output all bulbs with their IDs.
+
 Limitations
 -----------
 
-This plugin is beta and work in progress. At the moment you can only controll the brightness and the on/off state of your bulbs. As I don't own any color bulbs yet I'm unable to test code for controlling the color.
+This plugin is beta and work in progress. At the moment you can only control the brightness and the on/off state of your bulbs. As I don't own any color bulbs yet I'm unable to test code for controlling the color.
