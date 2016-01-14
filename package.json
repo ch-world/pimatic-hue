@@ -1,6 +1,6 @@
 {
   "name": "pimatic-hue",
-  "description": "Plugin to controll Philipps hue bulbs",
+  "description": "Plugin to control Philipps hue bulbs",
   "author": "Christian Herrmann <christian@ch-world.de> (http://ch-world.de)",
   "main": "hue",
   "files": [
