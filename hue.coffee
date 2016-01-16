@@ -101,7 +101,7 @@ module.exports = (env) ->
           HueApi.change light.set({"on": false})
 
       @_setDimlevel(state)
-      return state
+      Promise.resolve()
 
   # ###Finally
   # Create a instance of my plugin
