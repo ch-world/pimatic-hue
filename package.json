@@ -18,7 +18,7 @@
   },
   "configSchema": "hue-config-schema.coffee",
   "dependencies": {
-    "hue-module": "^0.1.0"
+    "philips-hue": "^0.1.2"
   },
   "peerDependencies": {
     "pimatic": "0.8.*"

@@ -4,8 +4,8 @@ module.exports = {
   title: "Hue plugin config options"
   type: "object"
   properties:
-    apiKey:
-      description: "Hue API key"
+    username:
+      description: "Hue username"
       type: "string"
     host:
       description: "Address of Hue Bridge"

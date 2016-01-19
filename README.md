@@ -6,13 +6,13 @@ Plugin to control Philipps hue bulbs
 Configuration
 -------------
 
-You need to create an API key on your bridge to use this plugin. See the [hue developer programm](http://www.developers.meethue.com/documentation/getting-started) for details how to do this.
+You need to create an user on your bridge to use this plugin. See the [hue developer programm](http://www.developers.meethue.com/documentation/getting-started) for details how to do this.
 
 plugins section:
 ```
 {
   "plugin": "hue",
-  "apiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "username": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "host": "xxx.xxx.xxx.xxx"
 }
 ```

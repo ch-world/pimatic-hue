@@ -24,7 +24,9 @@ module.exports = (env) ->
   #  
   #     someThing = require 'someThing'
   #  
-  HueApi = require 'hue-module'
+  # HueApi = require 'hue-module'
+  HueApi = require 'philips-hue'
+  hueApi = new HueApi()
 
   # ###MyPlugin class
   # Create a class that extends the Plugin class and implements the following functions:
@@ -52,13 +54,14 @@ module.exports = (env) ->
       })
 
       host = @config.host
-      key = @config.apiKey
+      username = @config.username
       @polling = @config.polling
 
-      HueApi.load host, key
+      hueApi.bridge = host
+      hueApi.username = username
 
-      HueApi.lights (result) =>
-        env.logger.debug(result)
+      hueApi.lights (err, lights) =>
+        env.logger.debug(lights)
 
 
   class HueBulb extends env.devices.DimmerActuator
@@ -69,39 +72,48 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
       @hueId = @config.hueId
+      @light = hueApi.light @hueId
+      hueApi.light @hueId
       super()
       @poll()
       setInterval( ( => @poll() ), plugin.polling)
 
     poll: ->
       env.logger.debug("Polling Hue " + @config.hueId)
-      HueApi.light @config.hueId, (light) =>
-        #level = null
-        if light.reachable
-          if light.on
-            level = Math.round light.bri / 254 * 100
+      @light.getInfo (err, res) =>
+        if err
+          env.logger.warn("Error while polling: " + err)
+        else
+          if res.state.reachable
+            if res.state.on
+              level = Math.round res.state.bri / 254 * 100
+            else
+              level = 0
           else
             level = 0
-        else
-          level = 0
-        if level != @_dimlevel
-          @_dimlevel = level
-          @_setState(level > 0)
-          @emit 'dimlevel', level
+          if level != @_dimlevel
+            @_dimlevel = level
+            @_setState(level > 0)
+            @emit 'dimlevel', level
 
     changeDimlevelTo: (state) ->
       level = Math.round state * 254 / 100
 
-      if level > 0
-        HueApi.light @hueId, (light) =>
-          HueApi.change light.set({"bri": level, "on": true})
-
-      if level == 0
-        HueApi.light @hueId, (light) =>
-          HueApi.change light.set({"on": false})
-
-      @_setDimlevel(state)
-      Promise.resolve()
+      new Promise (resolve, reject) =>
+        if level > 0
+          @light.setState {"bri": level, "on": true}, (err, res) =>
+            if err
+              reject err
+            else
+              @_setDimlevel(state)
+              resolve res
+        else
+          @light.off (err, res) =>
+            if err
+              reject err
+            else
+              @_setDimlevel(state)
+              resolve res
 
   # ###Finally
   # Create a instance of my plugin
