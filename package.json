@@ -9,7 +9,7 @@
     "hue-config-schema.coffee",
     "device-config-schema.coffee"
   ],
-  "version": "0.0.4",
+  "version": "0.1.0",
   "homepage": "http://your-plugin-website",
   "private": false,
   "repository": {
