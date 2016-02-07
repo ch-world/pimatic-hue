@@ -31,7 +31,8 @@ module.exports = (env) ->
   # ###MyPlugin class
   # Create a class that extends the Plugin class and implements the following functions:
   class Hue extends env.plugins.Plugin
-    polling: null
+    # array for notifying HueBulbs on poll
+    bulbs: []
 
     # ####init()
     # The `init` function is called by the framework to ask your plugin to initialise.
@@ -55,13 +56,31 @@ module.exports = (env) ->
 
       host = @config.host
       username = @config.username
-      @polling = @config.polling
+      polling = @config.polling
 
       hueApi.bridge = host
       hueApi.username = username
 
       hueApi.lights (err, lights) =>
         env.logger.debug(lights)
+
+      setInterval( ( => @poll() ), polling)
+
+    # add bulb to list for polling
+    registerBulb: (bulb) ->
+      @bulbs.push bulb
+
+    # function for polling state of bulbs
+    # notifys HueBulb about state
+    poll: ->
+      env.logger.debug("Polling Hue Bulbs")
+      hueApi.lights (err, lights) =>
+        if err
+          env.logger.warn("Error while polling: " + err)
+        else
+          for bulb in @bulbs
+            do (bulb) ->
+              bulb.updateState lights[bulb.hueId].state
 
 
   class HueBulb extends env.devices.DimmerActuator
@@ -73,28 +92,23 @@ module.exports = (env) ->
       @id = @config.id
       @hueId = @config.hueId
       @light = hueApi.light @hueId
-      hueApi.light @hueId
       super()
-      @poll()
-      setInterval( ( => @poll() ), plugin.polling)
+      plugin.registerBulb(this)
 
-    poll: ->
-      env.logger.debug("Polling Hue " + @config.hueId)
-      @light.getInfo (err, res) =>
-        if err
-          env.logger.warn("Error while polling: " + err)
+    # called by polling for updating the state
+    # argument is the current state returned by the bridge
+    updateState: (state) ->
+      if state.reachable
+        if state.on
+          level = Math.round state.bri / 254 * 100
         else
-          if res.state.reachable
-            if res.state.on
-              level = Math.round res.state.bri / 254 * 100
-            else
-              level = 0
-          else
-            level = 0
-          if level != @_dimlevel
-            @_dimlevel = level
-            @_setState(level > 0)
-            @emit 'dimlevel', level
+          level = 0
+      else
+        level = 0
+      if level != @_dimlevel
+        @_dimlevel = level
+        @_setState(level > 0)
+        @emit 'dimlevel', level
 
     changeDimlevelTo: (state) ->
       level = Math.round state * 254 / 100
